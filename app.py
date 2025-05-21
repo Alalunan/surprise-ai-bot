@@ -1,16 +1,7 @@
-#surprise-ai-bot/app.py
+# surprise-ai-bot/app.py
 import os
 import logging
-import asyncio
 from fastapi import FastAPI
-from modules import (
-    get_text,
-    can_use,
-    ask_gpt,
-    get_user,
-    send_surprise,
-    default_texts
-)
 from modules.telegram import router as telegram_router
 from modules.router import router as main_router
 from modules.scheduler import start_scheduler
@@ -31,7 +22,7 @@ if not TOKEN:
 
 app = FastAPI()
 
-# Регистрируем маршруты в диспетчере aiogram
+# Регіструємо маршрути в диспетчері aiogram
 dp.include_router(main_router)
 dp.include_router(telegram_router)
 
@@ -40,17 +31,16 @@ async def on_startup():
     try:
         await init_db()
         await init_limits_table()
-        # Запускаем планировщик (создаёт задачу в текущем event loop)
         loop = asyncio.get_event_loop()
         start_scheduler(loop)
-        logging.info("✅ База, лимиты и планировщик инициализированы")
+        logging.info("✅ База, ліміти і планувальник ініціалізовані")
     except Exception as e:
-        logging.error(f"❌ Ошибка инициализации: {e}")
+        logging.error(f"❌ Помилка ініціалізації: {e}", exc_info=True)
 
 @app.on_event("shutdown")
 async def on_shutdown():
     await bot.session.close()
-    logging.info("🔌 Сессия Telegram бота закрыта")
+    logging.info("🔌 Сесія Telegram бота закрита")
 
 @app.get("/")
 async def root():
@@ -59,11 +49,3 @@ async def root():
 @app.get("/healthz")
 async def healthcheck():
     return {"status": "ok"}
-
-async def start_bot():
-    logging.info("🚀 Запуск Telegram бота (Long Polling)...")
-   
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("app:app", host="0.0.0.0", port=PORT, log_level="info")
