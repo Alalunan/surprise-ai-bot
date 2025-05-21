@@ -3,13 +3,15 @@ services:
     name: surprise-ai-bot
     env: python
     region: oregon
-     plan: free
+    plan: free
     buildCommand: pip install -r requirements.txt
-    startCommand: hypercorn app:app --bind 0.0.0.0:$PORT
+    startCommand: python start.py
     envVars:
+      - key: PORT
+        value: 8000  # За замовчуванням, Render перезапише це
       - key: TELEGRAM_TOKEN
         sync: false
       - key: OPENROUTER_API_KEY
         sync: false
-      - key: WEBHOOK_URL
+      - key: RENDER_EXTERNAL_URL
         value: https://surprise-ai-bot.onrender.com
